@@ -1,47 +1,32 @@
-from django.shortcuts import render
-from django.http import JsonResponse,HttpResponse
 from .serializers import * 
 from .models import * 
-from rest_framework import status
-from django.shortcuts import get_object_or_404
-from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
+from rest_framework.mixins import (
+                ListModelMixin,
+                RetrieveModelMixin,
+                CreateModelMixin,
+                UpdateModelMixin,
+                DestroyModelMixin,
+            )
 
-class Student_api(APIView):
+#Aggregating api which don't require pk and have common memebers
+class Student_api_LC(GenericAPIView, ListModelMixin, CreateModelMixin):
+    queryset = StudentModel.objects.all()  
+    serializer_class = StudentSerialize
+
     def get(self, request, *args, **kwargs):
-        id = kwargs.get('id')
-        if id is not None:
-            instance = get_object_or_404(StudentModel,pk=id) 
-            serialzed = StudentSerialize(instance, many=False)
-            return Response(serialzed.data)
-        instance = StudentModel.objects.all()  
-        serialzed = StudentSerialize(instance,many=True)
-        return Response(serialzed.data)
+        return self.list( request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        id = kwargs.get('id')
-        serialzed = StudentSerialize(data = request.data)
-        if serialzed.is_valid():
-            serialzed.save()
-            return Response("Student is succefully added!. ")
-        return Response(serialzed.errors, status = status.HTTP_400_BAD_REQUEST)
+        return self.create( request, *args, **kwargs)
+
+class Student_api_RUD(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin ):
+    queryset = StudentModel.objects.all()  
+    serializer_class = StudentSerialize
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve( request, *args, **kwargs)
     def put(self, request, *args, **kwargs):
-        id = kwargs.get('id')
-        instance = get_object_or_404(StudentModel,pk=id) 
-        serialzed = StudentSerialize(instance, data = request.data)
-        if serialzed.is_valid():
-            serialzed.save()
-            return Response("Student is succefully updated!. ")
-        return Response(serialzed.errors, status = status.HTTP_400_BAD_REQUEST)
-    def patch(self, request, *args, **kwargs):
-        id = kwargs.get('id')
-        instance = get_object_or_404(StudentModel,pk=id) 
-        serialzed = StudentSerialize(instance, data = request.data,partial=True)
-        if serialzed.is_valid():
-            serialzed.save()
-            return Response("Student is succefully updated!. ")
-        return Response(serialzed.errors, status = status.HTTP_400_BAD_REQUEST)
+        return self.update( request, *args, **kwargs)
     def delete(self, request, *args, **kwargs):
-        id = kwargs.get('id')
-        get_object_or_404(StudentModel,pk=id).delete()
-        return Response("Student is succefully deleted!. ")
+        return self.destroy( request, *args, **kwargs)
