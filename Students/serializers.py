@@ -24,16 +24,3 @@ class StudentSerialize(serializers.ModelSerializer):
         if stu_count > 100:
             raise serializers.ValidationError('All the seats are full, cannot accomodate more students')
         return value
-
-    def update(self,instance, validate_data):
-        instance.name = validate_data.get('name',instance.name)
-        instance.age = validate_data.get('age',instance.age)
-        instance.rollno = validate_data.get('rollno',instance.rollno)
-        instance.save()
-        return instance
-
-    def post(self, validate_data):
-        return StudentModel.create(**validate_data)
-    class Meta:
-        model=StudentModel
-        fields ='__all__'
