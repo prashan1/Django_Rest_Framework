@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'Students',
     'django_filters',
     'rest_framework',
+    'rest_framework.authtoken'
 
 ]
 
@@ -109,10 +110,7 @@ REST_FRAMEWORK = {
     # 'DEFAULT_PERMISSION_CLASSES': [
     #     'rest_framework.permissions.IsAuthenticated',
     # ]
-    'DEFAULT_THROTTLE_RATES' : {
-        
-        'viewAll':'5/day'
-    }
+
 }
 
 # Internationalization
