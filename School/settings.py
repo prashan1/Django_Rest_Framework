@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Students',
-    'rest_framework'
+    'django_filters',
+    'rest_framework',
+
 ]
 
 MIDDLEWARE = [
@@ -108,8 +110,8 @@ REST_FRAMEWORK = {
     #     'rest_framework.permissions.IsAuthenticated',
     # ]
     'DEFAULT_THROTTLE_RATES' : {
-        'anon':'5/day',
-        'user':'10/day'
+        
+        'viewAll':'5/day'
     }
 }
 

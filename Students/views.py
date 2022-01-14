@@ -5,25 +5,30 @@ from rest_framework.authentication import BasicAuthentication, SessionAuthentica
 from rest_framework.permissions import( 
                     IsAuthenticated,
                     IsAuthenticatedOrReadOnly,
-                    AllowAny
+                    AllowAny,
+                    IsAdminUser,
                     )
+from rest_framework.response import Response
+
 from .customPermission import CustomPermission
-from rest_framework.filters import OrderingFilter
+from rest_framework.filters import OrderingFilter,SearchFilter
 from rest_framework.throttling import (
                     UserRateThrottle,
-                    AnonRateThrottle
+                    AnonRateThrottle,
+                    ScopedRateThrottle,
                     ) 
-from .throttling import CustomUserThrottle
+from rest_framework.generics import ListAPIView 
+# from django_filters.rest_framework import DjangoFilterBackend
 
-class Student_api(viewsets.ModelViewSet):
+
+class Student_api(ListAPIView):
     queryset = StudentModel.objects.all()
     serializer_class = StudentSerialize
-    authentication_classes = [SessionAuthentication]
-    permisssion_classes =[IsAuthenticatedOrReadOnly]
-    throttle_classes = [UserRateThrottle,AnonRateThrottle]
-    filter_backends  =[OrderingFilter]
-    ordering_fields= ['name']
-    # throttle_classes = [CustomUserThrottle,AnonRateThrottle]
-    # authentication_classes = [BasicAuthentication]
-    # permisssion_classes =[CustomPermission]
-    # permisssion_classes =[AllowAny]
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+    throttle_classes=[ScopedRateThrottle]
+    throttle_scope='viewAll'
+    filter_backends = [OrderingFilter,SearchFilter] #Using searchfilter and orderingfilter backend same time
+    ordering = '-rollno'  # Default Ordering 
+    filterset_fields = ['name']
+    search_fields = ['^name']
