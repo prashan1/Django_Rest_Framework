@@ -1,16 +1,18 @@
 from .serializers import * 
 from .models import * 
 from rest_framework import viewsets
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import (
                                 IsAuthenticated,
                                 AllowAny
 )
-
-#Aggregating api which don't require pk and have common memebers
+from rest_framework.pagination import PageNumberPagination
+#Using JWT authentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
 class Student_api(viewsets.ModelViewSet):
     queryset = StudentModel.objects.all()
     serializer_class = StudentSerialize
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated] 
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [AllowAny] 
+    # pagination_classes = [PageNumberPagination]
+
     
